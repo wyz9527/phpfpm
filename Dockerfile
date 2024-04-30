@@ -1,18 +1,8 @@
 FROM php:7.4.33-fpm                                                                                                                                                      
-
-RUN apt-get update -y \                                                                                                                                                  
-     && apt-get install -y cron && apt-get  install -y vim && apt install libgmp-dev -y && docker-php-ext-install gmp && apt-get install -y libgeoip-dev && apt-get install -y libzip-dev zip
+RUN apt-get update -y && apt-get install -y cron && apt-get  install -y vim && apt install libgmp-dev -y && docker-php-ext-install gmp && apt-get install -y libgeoip-dev && apt-get install -y libzip-dev zip
 # PHP_CPPFLAGS are used by the docker-php-ext-* scripts
 ENV PHP_CPPFLAGS="$PHP_CPPFLAGS -std=c++11"
-
-COPY geoip-1.1.1 /usr/src/php/ext/geoip
-COPY swoole /usr/src/php/ext/swoole
-COPY inotify /usr/src/php/ext/inotify
-
-#COPY . /opt/www/pokerapi/                                                                                                                                                
-#WORKDIR /opt/www/pokerapi/                                                                                                                                               
-# RUN ./geoip.sh                                                                                                                                                           
-
+COPY myext/ /usr/src/php/ext/
 RUN docker-php-ext-install pdo_mysql \                                                                                                                                   
     && docker-php-ext-install opcache \                                                                                                                                  
     && apt-get install libicu-dev -y \                                                                                                                                   
@@ -25,8 +15,8 @@ RUN docker-php-ext-install pdo_mysql \
     && apt-get remove libicu-dev icu-devtools -y \                                                                                                                       
     && docker-php-ext-install geoip \
 	&& docker-php-ext-install swoole \
-    && docker-php-ext-install inotify 
-	
+    && docker-php-ext-install inotify \
+	&& pecl install redis && docker-php-ext-enable redis && && docker-php-ext-enable sockets && pecl install apcu && docker-php-ext-enable apcu
 RUN { \                                                                                                                                                                  
         echo 'opcache.memory_consumption=128'; \                                                                                                                         
         echo 'opcache.interned_strings_buffer=8'; \                                                                                                                      
@@ -34,6 +24,4 @@ RUN { \
         echo 'opcache.revalidate_freq=2'; \                                                                                                                              
         echo 'opcache.fast_shutdown=1'; \                                                                                                                                
         echo 'opcache.enable_cli=1'; \                                                                                                                                   
-    } > /usr/local/etc/php/conf.d/php-opocache-cfg.ini   
-	
-RUN pecl install redis && docker-php-ext-enable redis && docker-php-ext-enable sockets && pecl install apcu && docker-php-ext-enable apcu                                                                                                                                                                                                                                                                                                                                                                                                                        
+    } > /usr/local/etc/php/conf.d/php-opocache-cfg.ini
