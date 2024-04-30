@@ -3,7 +3,10 @@ RUN apt-get update -y && apt-get install -y cron && apt-get  install -y vim && a
 # PHP_CPPFLAGS are used by the docker-php-ext-* scripts
 ENV PHP_CPPFLAGS="$PHP_CPPFLAGS -std=c++11"
 COPY ["myext/geoip /usr/src/php/ext/geoip", "myext/swoole /usr/src/php/ext/swoole", "myext/inotify /usr/src/php/ext/inotify"]
-RUN docker-php-ext-install pdo_mysql \                                                                                                                                   
+RUN docker-php-ext-install geoip \
+	&& docker-php-ext-install swoole \
+    && docker-php-ext-install inotify \
+	&& docker-php-ext-install pdo_mysql \                                                                                                                                   
     && docker-php-ext-install opcache \                                                                                                                                  
     && apt-get install libicu-dev -y \                                                                                                                                   
     && docker-php-ext-configure intl \                                                                                                                                   
@@ -12,11 +15,8 @@ RUN docker-php-ext-install pdo_mysql \
     && docker-php-ext-install sockets \                                                                                                                                  
     && docker-php-ext-install bcmath \                                                                                                                                   
     && docker-php-ext-install pcntl \                                                                                                                                    
-    && apt-get remove libicu-dev icu-devtools -y \                                                                                                                       
-    && docker-php-ext-install geoip \
-	&& docker-php-ext-install swoole \
-    && docker-php-ext-install inotify 
-RUN pecl install redis && docker-php-ext-enable redis && && docker-php-ext-enable sockets && pecl install apcu && docker-php-ext-enable apcu
+    && apt-get remove libicu-dev icu-devtools -y \
+	&& pecl install redis && docker-php-ext-enable redis && docker-php-ext-enable sockets && pecl install apcu && docker-php-ext-enable apcu
 RUN { \                                                                                                                                                                  
         echo 'opcache.memory_consumption=128'; \                                                                                                                         
         echo 'opcache.interned_strings_buffer=8'; \                                                                                                                      
