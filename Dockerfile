@@ -16,7 +16,9 @@ RUN docker-php-ext-install pdo_mysql \
     && docker-php-ext-install geoip \
 	&& docker-php-ext-install swoole \
     && docker-php-ext-install inotify \
-	&& pecl install redis && docker-php-ext-enable redis && && docker-php-ext-enable sockets && pecl install apcu && docker-php-ext-enable apcu
+	&& docker-php-ext-install redis \
+	&& docker-php-ext-install apcu 
+# pecl install redis && docker-php-ext-enable redis && && docker-php-ext-enable sockets && pecl install apcu && docker-php-ext-enable apcu
 RUN { \                                                                                                                                                                  
         echo 'opcache.memory_consumption=128'; \                                                                                                                         
         echo 'opcache.interned_strings_buffer=8'; \                                                                                                                      
