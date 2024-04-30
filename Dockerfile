@@ -2,7 +2,7 @@ FROM php:7.4.33-fpm
 RUN apt-get update -y && apt-get install -y cron && apt-get  install -y vim && apt install libgmp-dev -y && docker-php-ext-install gmp && apt-get install -y libgeoip-dev && apt-get install -y libzip-dev zip
 # PHP_CPPFLAGS are used by the docker-php-ext-* scripts
 ENV PHP_CPPFLAGS="$PHP_CPPFLAGS -std=c++11"
-COPY myext/ /usr/src/php/ext/
+COPY myext/* /usr/src/php/ext/
 RUN docker-php-ext-install pdo_mysql \                                                                                                                                   
     && docker-php-ext-install opcache \                                                                                                                                  
     && apt-get install libicu-dev -y \                                                                                                                                   
